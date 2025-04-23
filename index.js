@@ -12,7 +12,7 @@ const port = process.env.PORT || 3000;
 app.use(cors());
 app.use(bodyParser.json());
 
-// Connect to MongoDB (you need to set up MongoDB and replace the URI)
+// MongoDB connection setup
 mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost/urlshortener', {
   useNewUrlParser: true,
   useUnifiedTopology: true
@@ -34,9 +34,6 @@ const urlSchema = new mongoose.Schema({
 
 const Url = mongoose.model('Url', urlSchema);
 
-// Static files
-app.use('/public', express.static(`${process.cwd()}/public`));
-
 // Serve the homepage
 app.get('/', function(req, res) {
   res.sendFile(process.cwd() + '/views/index.html');
@@ -51,7 +48,7 @@ app.get('/api/hello', function(req, res) {
 app.post('/api/shorturl', function(req, res) {
   const originalUrl = req.body.url;
   
-  // Validate the URL
+  // Validate the URL format
   const regex = /^(ftp|http|https):\/\/[^ "]+$/;
   if (!regex.test(originalUrl)) {
     return res.json({ error: 'invalid URL' });
