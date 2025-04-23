@@ -13,7 +13,18 @@ app.use(cors());
 app.use(bodyParser.json());
 
 // Connect to MongoDB (you need to set up MongoDB and replace the URI)
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost/urlshortener', { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost/urlshortener', {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+});
+
+mongoose.connection.on('connected', () => {
+  console.log('Connected to MongoDB');
+});
+
+mongoose.connection.on('error', (err) => {
+  console.error('MongoDB connection error:', err);
+});
 
 // URL Schema for storing original and short URL
 const urlSchema = new mongoose.Schema({
